@@ -54,12 +54,38 @@ class Platform {
         c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height)
     }
 }
+class GenericObject {
+    constructor({x, y, image}){
+        this.position = {
+            x,
+            y
+        }
+        this.image = image
 
-const image = new Image()
-image.src = "./img/platform.png"
+        this.width= image.width
+        this.height= image.height
+    }
+
+    draw(){
+        // c.fillStyle = "blue"
+        // c.fillRect(this.position.x, this.position.y, this.width, this.height)
+        c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height)
+    }
+}
+
+function createImage(imageurl) {
+    const image = new Image()
+    image.src = imageurl
+    return image
+}
+
+const platformImage = createImage("./img/platform.png")
+const backgroundImage = createImage("./img/background.png")
+const hillsImage = createImage("./img/hills.png")
 
 const player = new Player()
-const platforms = [new Platform({x:-1,y:470, image}), new Platform({x:image.width - 3,y:470, image})]
+const platforms = [new Platform({x:-1,y:470, image:platformImage }), new Platform({x:platformImage.width - 3,y:470, image:platformImage})]
+const genericObjects = [new GenericObject({x:-1,y:-1, image:backgroundImage}), new GenericObject({x:0,y:0, image:hillsImage})]
 
 const keys = {
     right: {
@@ -75,6 +101,9 @@ let scrollOffset = 0
 function animate() {
     requestAnimationFrame(animate)
     c.clearRect(0,0, canvas.width, canvas.height)
+    genericObjects.forEach(genericObjects => {
+        genericObjects.draw()
+    })
     platforms.forEach((platform) => {
         platform.draw()
     })
@@ -96,12 +125,18 @@ function animate() {
             platforms.forEach((platform) => {
                 platform.position.x -= 5
             })
+            genericObjects.forEach(genericObject => {
+                genericObject.position.x -= 3
+            })
         }
         else if(keys.left.pressed)
         {
             scrollOffset -= 5
             platforms.forEach((platform) => {
                 platform.position.x += 5
+            })
+            genericObjects.forEach(genericObject => {
+                genericObject.position.x += 3
             })
         }
     }
