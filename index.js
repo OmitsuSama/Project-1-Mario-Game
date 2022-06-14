@@ -32,7 +32,6 @@ class Player {
         this.position.y += this.velocity.y
         if(this.position.y + this.velocity.y + this.height <= canvas.height)
             this.velocity.y += gravity
-        else this.velocity.y = 0
     }
 }
 
@@ -72,20 +71,21 @@ class GenericObject {
         c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height)
     }
 }
-
 function createImage(imageurl) {
     const image = new Image()
     image.src = imageurl
     return image
 }
 
-const platformImage = createImage("./img/platform.png")
-const backgroundImage = createImage("./img/background.png")
-const hillsImage = createImage("./img/hills.png")
+let platformImage = createImage("./img/platform.png")
+let backgroundImage = createImage("./img/background.png")
+let hillsImage = createImage("./img/hills.png")
 
-const player = new Player()
-const platforms = [new Platform({x:-1,y:470, image:platformImage }), new Platform({x:platformImage.width - 3,y:470, image:platformImage})]
-const genericObjects = [new GenericObject({x:-1,y:-1, image:backgroundImage}), new GenericObject({x:0,y:0, image:hillsImage})]
+let player = new Player()
+let platforms = [new Platform({x:-1,y:470, image:platformImage }), new Platform({x:platformImage.width - 3,y:470, image:platformImage}),  
+    new Platform({x:platformImage.width * 2 + 100,y:470, image:platformImage})]
+let genericObjects = [new GenericObject({x:-1,y:-1, image:backgroundImage}), new GenericObject({x:0,y:0, image:hillsImage})]
+
 
 const keys = {
     right: {
@@ -97,7 +97,25 @@ const keys = {
 }
 
 let scrollOffset = 0
+function init(){
+    function createImage(imageurl) {
+        const image = new Image()
+        image.src = imageurl
+        return image
+    }
 
+    // platformImage = createImage("./img/platform.png")
+    // backgroundImage = createImage("./img/background.png")
+    // hillsImage = createImage("./img/hills.png")
+
+    player = new Player()
+    platforms = [new Platform({x:-1,y:470, image:platformImage }), new Platform({x:platformImage.width - 3,y:470, image:platformImage}),  
+        new Platform({x:platformImage.width * 2 + 100,y:470, image:platformImage})]
+    genericObjects = [new GenericObject({x:-1,y:-1, image:backgroundImage}), new GenericObject({x:0,y:0, image:hillsImage})]
+
+
+    scrollOffset = 0
+}
 function animate() {
     requestAnimationFrame(animate)
     c.clearRect(0,0, canvas.width, canvas.height)
@@ -151,8 +169,15 @@ function animate() {
         // } 
     })
 
+    //Win case where player reaches the end of the screen (temporarily set at 2000)
     if (scrollOffset >= 2000){
         console.log("Good Job ! You win !")
+    }
+
+    //Loose case where player reaches the end of the screen
+    if (player.position.y > canvas.height){
+        console.log("You loose !")
+        init()
     }
 }
 
