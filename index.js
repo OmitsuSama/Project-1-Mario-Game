@@ -19,6 +19,7 @@ class Player {
         }
         this.width= 30
         this.height= 30
+        this.speed = 10
     }
 
     draw(){
@@ -80,11 +81,11 @@ function createImage(imageurl) {
 let platformImage = createImage("./img/platform.png")
 let backgroundImage = createImage("./img/background.png")
 let hillsImage = createImage("./img/hills.png")
+let platformSmallTall = createImage("./img/platformSmallTall.png")
 
 let player = new Player()
-let platforms = [new Platform({x:-1,y:470, image:platformImage }), new Platform({x:platformImage.width - 3,y:470, image:platformImage}),  
-    new Platform({x:platformImage.width * 2 + 100,y:470, image:platformImage})]
-let genericObjects = [new GenericObject({x:-1,y:-1, image:backgroundImage}), new GenericObject({x:0,y:0, image:hillsImage})]
+let platforms = []
+let genericObjects = []
 
 
 const keys = {
@@ -101,7 +102,7 @@ function init(){
     function createImage(imageurl) {
         const image = new Image()
         image.src = imageurl
-        return image
+        return image  
     }
 
     // platformImage = createImage("./img/platform.png")
@@ -109,8 +110,15 @@ function init(){
     // hillsImage = createImage("./img/hills.png")
 
     player = new Player()
-    platforms = [new Platform({x:-1,y:470, image:platformImage }), new Platform({x:platformImage.width - 3,y:470, image:platformImage}),  
-        new Platform({x:platformImage.width * 2 + 100,y:470, image:platformImage})]
+    platforms = [
+        new Platform({x:platformImage.width * 4 + 300 - 2 + platformImage.width - platformSmallTall.width,y:270, image:platformSmallTall}),
+        new Platform({x:-1,y:470, image:platformImage }), 
+        new Platform({x:platformImage.width - 3,y:470, image:platformImage}),  
+        new Platform({x:platformImage.width * 2 + 100,y:470, image:platformImage}), 
+        new Platform({x:platformImage.width * 3 + 300,y:470, image:platformImage}),
+        new Platform({x:platformImage.width * 4 + 300-2,y:470, image:platformImage}),
+        new Platform({x:platformImage.width * 5 + 650-2,y:470, image:platformImage}),
+        ]
     genericObjects = [new GenericObject({x:-1,y:-1, image:backgroundImage}), new GenericObject({x:0,y:0, image:hillsImage})]
 
 
@@ -129,32 +137,32 @@ function animate() {
     
 
     if(keys.right.pressed && player.position.x < 400){
-        player.velocity.x = 5
+        player.velocity.x = player.speed
     }
     else if(keys.left.pressed && player.position.x > 100 ){
-        player.velocity.x = -5
+        player.velocity.x = -player.speed
     }
     else {
         player.velocity.x = 0
 
         if(keys.right.pressed)
         {
-            scrollOffset += 5
+            scrollOffset += player.speed
             platforms.forEach((platform) => {
-                platform.position.x -= 5
+                platform.position.x -= player.speed
             })
             genericObjects.forEach(genericObject => {
-                genericObject.position.x -= 3
+                genericObject.position.x -= player.speed *0.66
             })
         }
         else if(keys.left.pressed)
         {
-            scrollOffset -= 5
+            scrollOffset -= player.speed
             platforms.forEach((platform) => {
-                platform.position.x += 5
+                platform.position.x += player.speed
             })
             genericObjects.forEach(genericObject => {
-                genericObject.position.x += 3
+                genericObject.position.x += player.speed *0.66
             })
         }
     }
@@ -170,7 +178,7 @@ function animate() {
     })
 
     //Win case where player reaches the end of the screen (temporarily set at 2000)
-    if (scrollOffset >= 2000){
+    if (scrollOffset >= platformImage.width * 5 + 650-2){
         console.log("Good Job ! You win !")
     }
 
@@ -181,6 +189,7 @@ function animate() {
     }
 }
 
+init()
 animate()
 
 addEventListener('keydown', ({ keyCode }) => {
@@ -198,7 +207,7 @@ addEventListener('keydown', ({ keyCode }) => {
 
         case 90:
             console.log('up')
-            player.velocity.y -= 20
+            player.velocity.y -= 25
             break
 
         case 83:
