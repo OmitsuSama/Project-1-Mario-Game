@@ -139,7 +139,7 @@ function animate() {
     if(keys.right.pressed && player.position.x < 400){
         player.velocity.x = player.speed
     }
-    else if(keys.left.pressed && player.position.x > 100 ){
+    else if((keys.left.pressed && player.position.x > 100) ||  (keys.left.pressed && scrollOffset === 0 && player.position.x > 0)){
         player.velocity.x = -player.speed
     }
     else {
@@ -155,7 +155,7 @@ function animate() {
                 genericObject.position.x -= player.speed *0.66
             })
         }
-        else if(keys.left.pressed)
+        else if(keys.left.pressed && scrollOffset > 0)
         {
             scrollOffset -= player.speed
             platforms.forEach((platform) => {
